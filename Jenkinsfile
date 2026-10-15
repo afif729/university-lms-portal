@@ -38,40 +38,57 @@ pipeline {
         }
 
         stage('Test Image') {
-    steps {
-        bat '''
-            docker rm -f lms-ci-test 2>NUL
-            docker run -d --name lms-ci-test -p 18080:80 %IMAGE_NAME%:%IMAGE_TAG%
-        '''
-
-        script {
-            try {
+            steps {
                 bat '''
-                    @echo off
-                    set "HEALTHY=0"
-
-                    for /L %%i in (1,1,15) do (
-                        curl.exe -fsS --max-time 3 http://localhost:18080/healthz && (
-                            set "HEALTHY=1"
-                            goto :health_done
-                        )
-                        timeout /t 2 /nobreak >NUL
-                    )
-
-                    :health_done
-                    if "%HEALTHY%"=="0" exit /b 1
+                docker rm -f lms-ci-test 2>NUL
+                docker run -d --name lms-ci-test -p 18080:80 %IMAGE_NAME%:%IMAGE_TAG%
                 '''
-            } catch (err) {
-                error('Docker image health test failed')
+
+            script {
+                try {
+                    powershell(
+                        executable: 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe',
+                        script: '''
+                            $healthy = $false
+
+                            for ($i = 0; $i -lt 15; $i++) {
+                                try {
+                                    $response = Invoke-WebRequest `
+                                        -Uri "http://localhost:18080/healthz" `
+                                        -UseBasicParsing `
+                                        -TimeoutSec 3
+
+                                    if ($response.StatusCode -eq 200 -and
+                                        $response.Content.Trim() -eq "healthy") {
+                                        $healthy = $true
+                                        break
+                                    }
+                                }
+                                catch {
+                                    Start-Sleep -Seconds 2
+                                }
+                            }
+
+                            if (-not $healthy) {
+                                docker logs lms-ci-test
+                                throw "Docker image health test failed"
+                            }
+
+                            Write-Host "Docker image health test passed."
+                        '''
+                    )
+                } catch (err) {
+                    error('Docker image health test failed')
+                }
             }
         }
-    }
-    post {
-        always {
-            bat 'docker rm -f lms-ci-test 2>NUL'
+
+            post {
+                always {
+                    bat 'docker rm -f lms-ci-test 2>NUL'
+                }
+            }
         }
-    }
-}
 
         stage('Publish to Docker Hub') {
             steps {
