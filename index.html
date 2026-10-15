@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>University Learning Portal</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f1f5f9;
+        color: #1e293b;
+      }
+      header {
+        background: #12305a;
+        color: white;
+        padding: 25px 8%;
+      }
+      header h1 {
+        margin: 0 0 8px;
+      }
+      nav {
+        background: #1e477c;
+        padding: 14px 8%;
+      }
+      nav a {
+        color: white;
+        margin-right: 22px;
+        text-decoration: none;
+      }
+      main {
+        padding: 30px 8%;
+      }
+      .welcome {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 24px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+      }
+      .card {
+        background: white;
+        padding: 22px;
+        border-radius: 12px;
+        border-top: 4px solid #2870bd;
+        box-shadow: 0 3px 10px #0000000b;
+      }
+      .card h3 {
+        color: #12305a;
+        margin-top: 0;
+      }
+      footer {
+        text-align: center;
+        background: #12305a;
+        color: white;
+        padding: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>University Learning Management Portal</h1>
+      <p>Learn, collaborate, and achieve academic excellence.</p>
+    </header>
+
+    <nav>
+      <a href="#courses">Courses</a>
+      <a href="#faculty">Faculty</a>
+      <a href="#resources">Resources</a>
+      <a href="#assignments">Assignments</a>
+      <a href="#exams">Examinations</a>
+    </nav>
+
+    <main>
+      <section class="welcome">
+        <h2>Welcome to the University Portal</h2>
+        <p>
+          Access course information, faculty details, study materials,
+          assignment announcements, and examination schedules in one place.
+        </p>
+      </section>
+
+      <section class="grid">
+        <article class="card" id="courses">
+          <h3>Courses</h3>
+          <ul>
+            <li>Software Engineering</li>
+            <li>Database Management Systems</li>
+            <li>Cloud Computing</li>
+            <li>Computer Networks</li>
+          </ul>
+        </article>
+
+        <article class="card" id="faculty">
+          <h3>Faculty Profiles</h3>
+          <p><strong>Dr. Ananya Rao</strong><br />Software Engineering</p>
+          <p><strong>Prof. Arjun Kumar</strong><br />Cloud Computing</p>
+        </article>
+
+        <article class="card" id="resources">
+          <h3>Learning Resources</h3>
+          <ul>
+            <li>Lecture Notes</li>
+            <li>Reference Books</li>
+            <li>Lab Manuals</li>
+            <li>Practice Questions</li>
+          </ul>
+        </article>
+
+        <article class="card" id="assignments">
+          <h3>Assignment Announcements</h3>
+          <p>Web Technology Assignment — Submit by 25 October 2026.</p>
+          <p>Database Lab Record — Submit by 28 October 2026.</p>
+        </article>
+
+        <article class="card" id="exams">
+          <h3>Examination Schedule</h3>
+          <p>Software Engineering — 2 November 2026</p>
+          <p>Database Systems — 5 November 2026</p>
+          <p>Cloud Computing — 9 November 2026</p>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <p>University Learning Portal | DevOps Deployment Demonstration</p>
+    </footer>
+  </body>
+</html>

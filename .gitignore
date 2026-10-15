@@ -1,0 +1,5 @@
+.env
+kubeconfig
+kubeconfig.*
+*.pem
+*.key
