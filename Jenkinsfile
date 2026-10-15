@@ -38,43 +38,40 @@ pipeline {
         }
 
         stage('Test Image') {
-            steps {
-                bat '''
-                    docker rm -f lms-ci-test 2>NUL
-                    docker run -d --name lms-ci-test -p 18080:80 %IMAGE_NAME%:%IMAGE_TAG%
-                '''
+    steps {
+        bat '''
+            docker rm -f lms-ci-test 2>NUL
+            docker run -d --name lms-ci-test -p 18080:80 %IMAGE_NAME%:%IMAGE_TAG%
+        '''
 
-                script {
-                    int testStatus = powershell(
-                        returnStatus: true,
-                        script: '''
-                            $ErrorActionPreference = "Stop"
-                            try {
-                                $healthy = $false
-                                for ($i = 0; $i -lt 12; $i++) {
-                                    try {
-                                        $r = Invoke-WebRequest `
-                                            -Uri "http://localhost:18080/healthz" `
-                                            -TimeoutSec 3
-                                        if ($r.StatusCode -eq 200) {
-                                            $healthy = $true
-                                            break
-                                        }
-                                    } catch {}
-                                    Start-Sleep -Seconds 2
-                                }
-                                if (-not $healthy) { exit 1 }
-                            } catch { exit 1 }
-                        '''
+        script {
+            try {
+                bat '''
+                    @echo off
+                    set "HEALTHY=0"
+
+                    for /L %%i in (1,1,15) do (
+                        curl.exe -fsS --max-time 3 http://localhost:18080/healthz && (
+                            set "HEALTHY=1"
+                            goto :health_done
+                        )
+                        timeout /t 2 /nobreak >NUL
                     )
 
-                    bat 'docker rm -f lms-ci-test'
-                    if (testStatus != 0) {
-                        error('Docker image health test failed')
-                    }
-                }
+                    :health_done
+                    if "%HEALTHY%"=="0" exit /b 1
+                '''
+            } catch (err) {
+                error('Docker image health test failed')
             }
         }
+    }
+    post {
+        always {
+            bat 'docker rm -f lms-ci-test 2>NUL'
+        }
+    }
+}
 
         stage('Publish to Docker Hub') {
             steps {
